@@ -15,6 +15,11 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'polls/styles.css' %}">
+        <style>
+            a {
+              color: #ffffff;
+            }
+          </style>
 </head>
 <body>
     <!-- Navigation-->
@@ -30,23 +35,35 @@
             </div>
         </div>
     </nav>
-    <h1>Music Mage</h1>
-    {% if latest_question_list %}
-    <ul>
-        {% for question in latest_question_list %}
-            <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-        {% endfor %}
-    </ul>
-        {% else %}
-            <p>No polls are available.</p>
-    {% endif %}
-<!-- Footer-->
-<footer class="py-5 bg-black">
-    <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; Music Mage 2021</p></div>
-</footer>
-<!-- Bootstrap core JS-->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Core theme JS-->
-<script src="js/scripts.js"></script>
+    <header class="masthead text-center text-white">
+        <div class="masthead-content">
+            <div class="container px-5">
+                <h1 class="masthead-heading mb-0">Music Mage</h1>
+                <h2 class="masthead-subheading mb-0">
+                    {% if latest_question_list %}
+                    <ul>
+                        {% for question in latest_question_list %}
+                            <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+                        {% endfor %}
+                    </ul>
+                        {% else %}
+                            <p>No polls are available.</p>
+                    {% endif %}</h2>
+                <a class="btn btn-primary btn-xl rounded-pill mt-5" href="#scroll">Learn More</a>
+            </div>
+        </div>
+        <div class="bg-circle-1 bg-circle"></div>
+        <div class="bg-circle-2 bg-circle"></div>
+        <div class="bg-circle-3 bg-circle"></div>
+        <div class="bg-circle-4 bg-circle"></div>
+    </header>
+    <!-- Footer-->
+    <footer class="py-5 bg-black">
+        <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; Music Mage 2021</p></div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
 </body>
 </html>
