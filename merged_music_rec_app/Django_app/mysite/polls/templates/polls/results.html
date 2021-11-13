@@ -40,23 +40,41 @@
                 <div class="col-lg-6 order-lg-1">
                     <div class="p-5">
                         <br></br>
-                        <h3 class="display-4">Let the music magic begin!</h3>
+                        <h1 class="display-4">Let the music magic begin!</h1>
                         <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p> -->
-                        <h1>{{ Trackform.sample_track }}</h1>
+                        <h3>Recommendations based on {{ TrackForm.sample_track }} by {{ TrackForm.sample_artist }}</h3>
+                        <!-- <form method="POST" action="{% url 'polls:find' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                              <label for="sample_track">Song Track</label>
+                              <input type="text" class="form-control" id="sample_track" placeholder="Title">
+                            </div>
+                            <br>
+                            <div class="form-group">
+                              <label for="sample_artist">Artist Name</label>
+                              <input type="text" class="form-control" id="sample_artist" placeholder="John Smith">
+                            </div>
+                            <br>
+                            <button type="submit" value='search' class="btn btn-primary">Search</button>
+                        </form> -->
+                          
+                        {{ results|safe }}
+
+                        <a href="{% url 'polls:mage' %}">Search again?</a>
 
                         <!-- <ul>
                             {% for choice in question.choice_set.all %}
                             <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
                             {% endfor %}
-                        </ul> --> -->
-
-                        <ul>
+                        </ul> -->
+                        
+                        <!-- <ul>
                         {% for result in results %}
 
                             <li>{{ result.track_name }} | {{ result.artist_name }}</li>
     
                         {% endfor %}
-                        </ul>
+                        </ul> -->
 
                         <!-- <a href="{% url 'polls:detail' question.id %}">Vote again?</a> -->
                     </div>

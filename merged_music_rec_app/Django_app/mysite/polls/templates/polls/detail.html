@@ -55,7 +55,7 @@
                             </fieldset>
                             <input type="submit" value="Submit">
                         </form> -->
-                        <form method="POST" action="{% url 'polls:search' %}">
+                        <form method="POST" action="{% url 'polls:find' %}">
                             {% csrf_token %}
                             <input type="text" name="textfield">
                             

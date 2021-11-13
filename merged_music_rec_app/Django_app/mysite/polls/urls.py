@@ -12,6 +12,8 @@ urlpatterns = [
     path('mage.html/find/', views.find, name='find'),
     # path('mage.html/<str:track_id>/find/', views.find, name='find'),
  
+    # path('mage.html/results/', views.results, name='results'),
+
     path('mage.html/results/', views.ResultsView.as_view(), name='results'),
     
 ]

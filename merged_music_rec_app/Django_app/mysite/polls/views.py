@@ -1,22 +1,18 @@
-# Create your views here.
-from django.http import HttpResponse
-# HttpResponseRedirect,
+# Import django modules
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-# get_object_or_404,
-# from django.urls import reverse
+# , get_object_or_404
+from django.urls import reverse
 from django.views import generic
-# from .models import Person
-from .forms import TrackForm
-from .models import SongTracks
+# from django.views.generic import TemplateView
 from django.core.exceptions import *
 
+# Import models
+from .forms import TrackForm
+from .models import SongTracks
 import os
 
 # Import modules
-# import sys
-# If your authentification script is not in the project directory
-# append its folder to sys.path
-# sys.path.append("../spotify_api_web_app")
 import pandas as pd
 import numpy as np
 import spotipy
@@ -24,13 +20,29 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from decouple import config
 import csv
 
+
+
+# FUNCTION TO LOAD HOMEPAGE
+def index(request):
+    return render(request, 'polls/index.html')
+
+# FUNCTION TO LOAD MUSIC MAGE SEARCH ENGINE PAGE
+def mage(request):
+    return render(request, 'polls/mage.html')
+
+# SEARCH RESULTS PAGE
+class ResultsView(generic.DetailView):
+    model = SongTracks
+    template_name = 'results.html'
+
+# CREATE FUNCTION TO LOAD DATA INTO SONGTRACKS MODEL
 def get_table():
     p = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'music_characteristics_dataset.csv')
     with open(p, encoding='utf-8') as f:
         reader = csv.reader(f)
         # Skip the header row of the CSV file
         next(reader)
-
+        
         for row in reader:
             obj, created = SongTracks.objects.get_or_create(
             id=row[0],
@@ -50,19 +62,18 @@ def get_table():
             try:
                 created.save()
             except:
-                # if the're a problem anywhere, you wanna know about it
-                print("there was a problem with line")
+                # if there is a problem anywhere, you wanna know about it
+                print("There was a problem")
 
+# CREATE FUNCTION TO ACTIVATE DATA LOADING OR ACCESS DATA AND RETURN A DATAFRAME
 def df():
-    get_table()
-    data = SongTracks.objects.all()
-    df = pd.DataFrame(data)
-    return df
-    
+    if SongTracks.objects.count() == 0:
+        get_table()
+    else:
+        data = SongTracks.objects.all().values()
+        df = pd.DataFrame(data)
 
-def index(request):
-    # template_name = 'polls/index.html'
-    return render(request, 'polls/index.html')
+    return df
 
 # CREATE CLIENT FUNCTION TO CONNECT US TO SPOTIFY
 def client():
@@ -72,46 +83,32 @@ def client():
     spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
     return spotify
 
+# CREATE FUNCTION TO MATCH INPUT TEXT WITH SPOTIFY SONG TRACK ID
 def get_track_id(request):
     """Return the top 5 songs that match in mood."""
 
-    # GET TRACK ID
+    # 1. Create empty list to hold track_id
     track_id = []
-
-    # sample_track = request.POST.get('sample_track', None)
-    # sample_artist = request.POST.get('sample_artist', None)
     
+    # 2. Save the input text in variables
     form = TrackForm(request.POST)
-
     if form.is_valid():
         sample_track = TrackForm.cleaned_data['sample_track']
         sample_artist = TrackForm.cleaned_data['sample_artist']
 
     try:
     # 3. Search Spotify for correct track
-        # sample_track = TrackForm.sample_track
-        # sample_artist = TrackForm.sample_artist
         track_result = client().search(q=f'track:{sample_track} artist:{sample_artist}', limit=1, type='track')
     except:
         return HttpResponse("no such song track")
         
-    # 4. Save details, especially track id
+    # 4. Save track id
     for i, t in enumerate(track_result['tracks']['items']):
-            # artist_name.append(t['artists'][0]['name'])
-            # track_name.append(t['name'])
         track_id.append(t['id'])
 
     track_id = track_id[0]
     return track_id
 
-# data = song_track.objects.all()
-#     id = {
-#         "id": data
-#     }
-# return render_to_response("login/profile.html", id)
-
-        
-           
 
 # CREATE RECOMMENDATION FUNCTION
 def recommend(track_id, ref_df, n_recs = 5):
@@ -137,17 +134,14 @@ def recommend(track_id, ref_df, n_recs = 5):
         "results": ref_df_sorted.iloc[:n_recs].to_html()
     }
     
-    # Return n recommendations
-    # return ref_df_sorted.iloc[:n_recs]
     return mydict
 
-def mage(request):
-    return render(request, 'polls/mage.html')
-
-
-# def detail(request, question_id):
-#     question = get_object_or_404(Question, pk=question_id)
-#     return render(request, 'polls/detail.html', {'question': question})
+# def results(request, id=None):
+#     searched_item = get_object_or_404(TrackForm(request.POST), id=id)
+    
+#     context= {'Song Track': searched_item,
+#               }
+#     return render(request, 'polls/results.html', context)
 
 # def vote(request, question_id):
 #     question = get_object_or_404(Question, pk=question_id)
@@ -166,14 +160,6 @@ def mage(request):
         
 #         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
-# class ResultsView(generic.DetailView):
-#     model = Question
-#     template_name = 'polls/results.html'
-
-class ResultsView(generic.DetailView):
-    model = TrackForm
-    template_name = 'polls/results.html'
-
 # def search(request):
 #     if request.method == 'POST':
 #         search_id = request.POST.get('textfield', None)
@@ -187,65 +173,31 @@ class ResultsView(generic.DetailView):
 #     else:
 #         return render(request, 'results.html')
 
+# CREATE FUNCTION THAT SEARCHES FOR SONG RECOMMENDATIONS
 def find(request):
-    # if the user clicks submit
+    # if the user clicks search
     if request.method == 'POST':
-        # form = TrackForm(request.POST)
-        # if form.is_valid():
-        
-        # get the track_id
+        # get the track_id and dataframe
         track_id = get_track_id(request)
         ref_df = df()
-    # If the track_id is not nothing/empty
 
-        # if form.is_valid():
         if track_id is not None:   
-    # song_track = get_object_or_404(TrackForm, pk=track_id)
             try:
-                # Try to retrieve recommendations that sound similar.
-                results = recommend(track_id=track_id, ref_df=ref_df)
+                # Try to retrieve song recommendations
+                results = recommend(track_id=track_id, ref_df=ref_df, n_recs = 5)
+                # return render(request,'mage.html', context=results)
             except:
-            
+                # if it doesn't work then reload the music mage search engine page
                 return render(request, 'polls/mage.html', {
-                'error_message': "Input not recognized.",
+                'error_message': "You didn't enter a song track.",
                 })
-            
-            # Redisplay the default song track search form with the results  
+               
+            # Display the page with the results  
             else:
-                # form.save()
-                return render(request, 'mage.html', context=results)
-            
+            #   form.save()
+                return HttpResponseRedirect(reverse('polls:results'))
+                # return render(request,'polls/results.html', context=results)
+
+    # if no one clicks the search button render the mage page       
     else:
-        return render(request, 'polls/mage.html')
-
-    # def dynamic_articles_view(request):
-    # context['object_list'] = article.objects.filter(title__icontains=request.GET.get('search'))
-    # return render(request, "encyclopedia/article_detail.html", context)
-        
-
-# try:
-#     profile = request.user.userprofile
-# except UserProfile.DoesNotExist:
-#     profile = UserProfile(user=request.user)
-
-# if request.method == 'POST':
-#     form = TrackForm(request.POST)
-#     if form.is_valid():
-#         form.save()
-#         # return redirect()
-#         return HttpResponseRedirect(reverse('polls:results', args=(song_tracks.id,)))
-# else:
-#     form = TrackForm()
-# return render((request, 'polls/mage.html'))
-
-    # return render(request, 'product-search.html')
-        # return HttpResponseRedirect(reverse('polls:results', args=(song_tracks.id,)))
-
-
-# if request.method == "POST":
-#         query_name = request.POST.get('name', None)
-#         if query_name:
-#             results = Product.objects.filter(name__contains=query_name)
-#             return render(request, 'product-search.html', {"results":results})
-
-#    
+        return render(request,'polls/mage.html')
