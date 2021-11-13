@@ -8,7 +8,6 @@ from .models import Choice, Question
     
 
 def index(request):
-    # template_name = 'polls/index.html'
     return render(request, 'polls/index.html')
 
 class IndexView(generic.ListView):
