@@ -9,6 +9,7 @@ from django.views import generic
 from .forms import TrackForm
 from .models import SongTracks
 from django.core.exceptions import *
+
 import os
 
 # Import modules
@@ -17,8 +18,6 @@ import os
 # append its folder to sys.path
 # sys.path.append("../spotify_api_web_app")
 import pandas as pd
-# from tqdm import tqdm
-# import time
 import numpy as np
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -33,7 +32,7 @@ def get_table():
         next(reader)
 
         for row in reader:
-            _, created = SongTracks.objects.get_or_create(
+            obj, created = SongTracks.objects.get_or_create(
             id=row[0],
             genre=row[1],
             track_name=row[2],
@@ -57,7 +56,8 @@ def get_table():
 def df():
     get_table()
     data = SongTracks.objects.all()
-    return data
+    df = pd.DataFrame(data)
+    return df
     
 
 def index(request):
@@ -132,9 +132,14 @@ def recommend(track_id, ref_df, n_recs = 5):
     
     # If the input track is in the reference set, it will have a distance of 0, but should not be recommended
     ref_df_sorted = ref_df_sorted[ref_df_sorted["id"] != track_id]
+
+    mydict = {
+        "results": ref_df_sorted.iloc[:n_recs].to_html()
+    }
     
     # Return n recommendations
-    return ref_df_sorted.iloc[:n_recs]
+    # return ref_df_sorted.iloc[:n_recs]
+    return mydict
 
 def mage(request):
     return render(request, 'polls/mage.html')
@@ -208,7 +213,7 @@ def find(request):
             # Redisplay the default song track search form with the results  
             else:
                 # form.save()
-                return render(request, 'mage.html', {"results":results})
+                return render(request, 'mage.html', context=results)
             
     else:
         return render(request, 'polls/mage.html')

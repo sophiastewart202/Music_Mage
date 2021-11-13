@@ -64,14 +64,15 @@
                         <br>
                         <button type="submit" value='search' class="btn btn-primary">Search</button>
                       </form>
-                    <ul>
+                      {{results|safe}}
+                    <!-- <ul>
                         {% for result in results %}
 
                             <li>{{ result.track_name }} | {{ result.artist_name }}</li>
 
                         {% endfor %}
                     </ul>
-                
+                 -->
                 <!-- <a class="btn btn-primary btn-xl rounded-pill mt-5" href="#scroll">Learn More</a> -->
             </div>
         </div>
