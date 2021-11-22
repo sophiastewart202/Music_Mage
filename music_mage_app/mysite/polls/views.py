@@ -1,11 +1,12 @@
 # Import django modules
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 # , get_object_or_404
 from django.urls import reverse
 from django.views import generic
-# from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 from django.core.exceptions import *
+from django.core.cache import cache
 
 # Import models
 from .forms import TrackForm
@@ -28,12 +29,34 @@ def index(request):
 
 # FUNCTION TO LOAD MUSIC MAGE SEARCH ENGINE PAGE
 def mage(request):
+
     return render(request, 'polls/mage.html')
 
+def results(request, track_id):
+    # form = TrackForm(request.POST)
+    # if form.is_valid():
+    #     sample_track = TrackForm.cleaned_data['sample_track'].value()
+    #     sample_artist = TrackForm.cleaned_data['sample_artist'].value()
+        # context={'sample_track': sample_track,'sample_artist': sample_artist}
+    track_id = cache.get(track_id)
+    return render(request, 'polls/results.html', context={'recs': cache.get('recs'), 
+    'sample_track':cache.get('sample_track'), 'sample_artist':cache.get('sample_artist'), 
+    'track_id':track_id,})
+
+def detail(request, track_id):
+    track_id = cache.get(track_id)
+    return render(request, 'polls/detail.html', {'track_id':track_id})
+
 # SEARCH RESULTS PAGE
-class ResultsView(generic.DetailView):
-    model = SongTracks
-    template_name = 'results.html'
+# class ResultsView(generic.DetailView):
+#     model = SongTracks
+#     template_name = 'results.html'
+#     track_id = cache.get('track_id')
+#     recs = cache.get('recs')
+#     sample_track = cache.get('sample_track')
+#     sample_artist = cache.get('sample_artist')
+    
+
 
 # CREATE FUNCTION TO LOAD DATA INTO SONGTRACKS MODEL
 def get_table():
@@ -72,8 +95,9 @@ def df():
     else:
         data = SongTracks.objects.all().values()
         df = pd.DataFrame(data)
-
-    return df
+        cache.set('df', df, 60)
+    # return df
+    return cache.get('df')
 
 # CREATE CLIENT FUNCTION TO CONNECT US TO SPOTIFY
 def client():
@@ -81,7 +105,9 @@ def client():
     client_secret = config('SPOTIPY_CLIENT_SECRET')
     client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
     spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-    return spotify
+    cache.set('spotify', spotify)
+    # return spotify
+    return cache.get('spotify')
 
 # CREATE FUNCTION TO MATCH INPUT TEXT WITH SPOTIFY SONG TRACK ID
 def get_track_id(request):
@@ -91,10 +117,12 @@ def get_track_id(request):
     track_id = []
     
     # 2. Save the input text in variables
-    form = TrackForm(request.POST)
-    if form.is_valid():
-        sample_track = TrackForm.cleaned_data['sample_track']
-        sample_artist = TrackForm.cleaned_data['sample_artist']
+    form = TrackForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        sample_track = form.cleaned_data['sample_track']
+        sample_artist = form.cleaned_data['sample_artist']
+        cache.set('sample_track', sample_track, 60)
+        cache.set('sample_artist', sample_artist, 60)
 
     try:
     # 3. Search Spotify for correct track
@@ -107,7 +135,9 @@ def get_track_id(request):
         track_id.append(t['id'])
 
     track_id = track_id[0]
-    return track_id
+    cache.set('track_id', track_id, 60)
+    # return track_id
+    return cache.get('track_id')
 
 
 # CREATE RECOMMENDATION FUNCTION
@@ -129,12 +159,10 @@ def recommend(track_id, ref_df, n_recs = 5):
     
     # If the input track is in the reference set, it will have a distance of 0, but should not be recommended
     ref_df_sorted = ref_df_sorted[ref_df_sorted["id"] != track_id]
+    cache.set('ref_df_sorted', ref_df_sorted, 60)
 
-    mydict = {
-        "results": ref_df_sorted.iloc[:n_recs].to_html()
-    }
-    
-    return mydict
+    # return ref_df_sorted.iloc[:n_recs]
+    return cache.get('ref_df_sorted')
 
 # def results(request, id=None):
 #     searched_item = get_object_or_404(TrackForm(request.POST), id=id)
@@ -181,23 +209,39 @@ def find(request):
         track_id = get_track_id(request)
         ref_df = df()
 
-        if track_id is not None:   
-            try:
+        # if track_id is not None:   
+        try:
                 # Try to retrieve song recommendations
-                results = recommend(track_id=track_id, ref_df=ref_df, n_recs = 5)
+            recs = recommend(track_id=track_id, ref_df=ref_df, n_recs = 5)
                 # return render(request,'mage.html', context=results)
-            except:
+        except:
                 # if it doesn't work then reload the music mage search engine page
-                return render(request, 'polls/mage.html', {
-                'error_message': "You didn't enter a song track.",
-                })
+            return render(request, 'polls/mage.html', {
+            'error_message': "You didn't enter a song track.",
+            })
                
-            # Display the page with the results  
-            else:
+        # Display the page with the results  
+        else:
+                # base_url = reverse('results')  # 1 /results/
+                # query_string =  urlencode({'recs': recs})  # 2 recs=dataframe
+                # url = '{}?{}'.format(base_url, query_string)  # 3 /results/?recs=dataframe
+                # return redirect(url)  # 4
             #   form.save()
-                return HttpResponseRedirect(reverse('polls:results'))
+            recs = recs.to_html()
+            # request.session['recs'] = recs.to_html()
+            cache.set('recs', recs, 120)
+            # return redirect('results')
+            return HttpResponseRedirect(reverse('polls:results', args=(track_id,)))
                 # return render(request,'polls/results.html', context=results)
 
     # if no one clicks the search button render the mage page       
     else:
+        # return render(request,'polls/mage.html')
         return render(request,'polls/mage.html')
+
+# def foo(request):
+#     request.session['bar'] = 'FooBar'
+#     return redirect('app:view')
+
+
+

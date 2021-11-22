@@ -8,14 +8,10 @@ urlpatterns = [
     path('', views.index, name='index'),
     # works
     path('mage.html/', views.mage, name='mage'),
-    #fails
-    path('mage.html/find/', views.find, name='find'),
-    # path('mage.html/<str:track_id>/find/', views.find, name='find'),
- 
-    # path('mage.html/results/', views.results, name='results'),
-
-    path('mage.html/results/', views.ResultsView.as_view(), name='results'),
-    
+    # works but doesn't display search results
+    path('mage.html/<str:track_id>/', views.results, name='results'),
+    # works but doesn't cache data frame
+    path('mage.html/find/', views.find, name='find'),  
 ]
 
 # path('mage.html/<int:track_id>/vote/', views.vote, name='vote'),

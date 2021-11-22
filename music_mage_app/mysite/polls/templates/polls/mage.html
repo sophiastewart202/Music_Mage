@@ -14,6 +14,7 @@
         <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         {% load static %}
+        {% load cache %}
         <link rel="stylesheet" type="text/css" href="{% static 'polls/styles.css' %}">
         <style>
             a {
@@ -50,19 +51,19 @@
                             <p>No polls are available.</p>
                     {% endif %}</h2> -->
                     
-                    <form method="POST" action="{% url 'polls:find' %}">
+                    <form action="{% url 'polls:find' %}" method="POST">
                         {% csrf_token %}
                         <div class="form-group">
                           <label for="sample_track">Song Track</label>
-                          <input type="text" class="form-control" id="sample_track" placeholder="Title">
+                          <input name="sample_track" type="text" class="form-control" id="sample_track" placeholder="Title">
                         </div>
                         <br>
                         <div class="form-group">
                           <label for="sample_artist">Artist Name</label>
-                          <input type="text" class="form-control" id="sample_artist" placeholder="John Smith">
+                          <input name="sample_artist" type="text" class="form-control" id="sample_artist" placeholder="John Smith">
                         </div>
                         <br>
-                        <button type="submit" value='search' class="btn btn-primary">Search</button>
+                        <button type="submit" value='search' class="btn btn-primary">Get Recommendations</button>
                       </form>
 
                       <!-- {{ results|safe }} -->

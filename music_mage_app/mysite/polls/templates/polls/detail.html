@@ -42,25 +42,26 @@
                     <div class="p-5">
                         <br></br>
                         <h3 class="display-4">From those retro record hits...</h3>
-                        <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p> -->
-                        <!-- <form action="{% url 'polls:vote' question.id %}" method="POST">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p> -->
+                        <form action="{% url 'polls:find' track_id %}" method="POST">
                             {% csrf_token %}
                             <fieldset>
-                                <legend><h1>{{ question.question_text }}</h1></legend>
+                                <legend><h1>{{ TrackForm.sample_track }}</h1></legend>
                                 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-                                {% for choice in question.choice_set.all %}
+                                <!-- {% for choice in question.choice_set.all %}
                                     <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
                                     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-                                {% endfor %}
+                                {% endfor %} -->
                             </fieldset>
                             <input type="submit" value="Submit">
-                        </form> -->
-                        <form method="POST" action="{% url 'polls:find' %}">
+                        </form>
+
+                        <!-- <form method="POST" action="{% url 'polls:detail' %}">
                             {% csrf_token %}
                             <input type="text" name="textfield">
                             
                             <button type="submit">Submit</button>
-                        </form>
+                        </form> -->
 
                     </div>
                 </div>
