@@ -7,13 +7,14 @@ urlpatterns = [
     # works
     path('', views.index, name='index'),
     # works
-    path('mage.html/', views.mage, name='mage'),
+    path('mage.html/', views.TrackFormView.as_view(), name='mage'),
     # works but doesn't display search results
     path('mage.html/<str:track_id>/', views.results, name='results'),
     # works but doesn't cache data frame
     path('mage.html/find/', views.find, name='find'),  
 ]
 
+# path('mage.html/', views.mage, name='mage'),
 # path('mage.html/<int:track_id>/vote/', views.vote, name='vote'),
 # path('mage.html/<int:pk>/', views.DetailView.as_view(), name='detail'),
 # urlpatterns = [

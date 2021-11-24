@@ -42,24 +42,14 @@
                     <div class="p-5">
                         <br></br>
                         <h1 class="display-4">Let the music magic begin!</h1>
+                        {% csrf_token %} 
                         <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p> -->
-                        <h3>Recommendations based on {{ sample_track }} by {{ sample_artist }}</h3>
-                        <!-- <form method="POST" action="{% url 'polls:find' %}">
-                            {% csrf_token %}
-                            <div class="form-group">
-                              <label for="sample_track">Song Track</label>
-                              <input type="text" class="form-control" id="sample_track" placeholder="Title">
-                            </div>
-                            <br>
-                            <div class="form-group">
-                              <label for="sample_artist">Artist Name</label>
-                              <input type="text" class="form-control" id="sample_artist" placeholder="John Smith">
-                            </div>
-                            <br>
-                            <button type="submit" value='search' class="btn btn-primary">Search</button>
-                        </form> -->
-                          
-                        {{ recs | safe }}
+                        <h3>Your Recommendations</h3>
+                        <h5>based on {{ sample_track }} by {{ sample_artist }}</h5>
+
+                        {% cache 600 recs %}
+                            {{recs.as_table|safe}}
+                        {% endcache %}
 
                         <a href="{% url 'polls:mage' %}">Search again?</a>
 

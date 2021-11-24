@@ -53,29 +53,23 @@
                     
                     <form action="{% url 'polls:find' %}" method="POST">
                         {% csrf_token %}
-                        <div class="form-group">
-                          <label for="sample_track">Song Track</label>
-                          <input name="sample_track" type="text" class="form-control" id="sample_track" placeholder="Title">
+                        <div class="form-group" ALIGN='center'>
+                          <!-- <label for="sample_track">Song Track</label> -->
+                          {{ form.sample_track }}
+                          <!-- <input name="sample_track" type="text" class="form-control" id="sample_track" placeholder="Title"> -->
                         </div>
                         <br>
-                        <div class="form-group">
-                          <label for="sample_artist">Artist Name</label>
-                          <input name="sample_artist" type="text" class="form-control" id="sample_artist" placeholder="John Smith">
+                        <div class="form-group" ALIGN='center'>
+                          <!-- <label for="sample_artist">Artist Name</label> -->
+                          {{ form.sample_artist }}
+                          <!-- <input name="sample_artist" type="text" class="form-control" id="sample_artist" placeholder="John Smith"> -->
                         </div>
                         <br>
+                        <!-- {{ form.sample_track }} -->
+                        <div class="form-group">
                         <button type="submit" value='search' class="btn btn-primary">Get Recommendations</button>
+                        </div>
                       </form>
-
-                      <!-- {{ results|safe }} -->
-                    <!-- <ul>
-                        {% for result in results %}
-
-                            <li>{{ result.track_name }} | {{ result.artist_name }}</li>
-
-                        {% endfor %}
-                    </ul>
-                 -->
-                <!-- <a class="btn btn-primary btn-xl rounded-pill mt-5" href="#scroll">Learn More</a> -->
             </div>
         </div>
         <div class="bg-circle-1 bg-circle"></div>

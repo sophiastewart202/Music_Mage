@@ -31,6 +31,7 @@ brotlipy==0.7.0
 certifi==2020.6.20
 cffi @ file:///C:/ci/cffi_1600699246375/work
 chardet==3.0.4
+charset-normalizer==2.0.7
 citipy==0.0.5
 click==7.1.2
 cloudpickle @ file:///tmp/build/80754af9/cloudpickle_1598884132938/work
@@ -54,13 +55,15 @@ defusedxml==0.6.0
 diff-match-patch @ file:///tmp/build/80754af9/diff-match-patch_1594828741838/work
 distributed @ file:///C:/ci/distributed_1605066635297/work
 Django==3.2.9
+django-environ==0.8.1
+django-pandas==0.6.6
 docutils==0.16
 entrypoints==0.3
 et-xmlfile==1.0.1
 fastcache==1.1.0
 filelock==3.0.12
 flake8 @ file:///tmp/build/80754af9/flake8_1601911421857/work
-Flask==1.1.2
+Flask==2.0.2
 Flask-PyMongo==2.3.0
 fsspec @ file:///tmp/build/80754af9/fsspec_1602684995936/work
 future==0.18.2
@@ -71,9 +74,12 @@ GitPython==3.1.18
 glob2==0.7
 gmaps==0.9.0
 greenlet @ file:///C:/ci/greenlet_1600885448389/work
+h11==0.12.0
 h5py==2.10.0
 HeapDict==1.0.1
 html5lib @ file:///tmp/build/80754af9/html5lib_1593446221756/work
+httpcore==0.13.7
+httpx==0.19.0
 idna @ file:///tmp/build/80754af9/idna_1593446292537/work
 imageio @ file:///tmp/build/80754af9/imageio_1594161405741/work
 imagesize==1.2.0
@@ -82,13 +88,13 @@ iniconfig @ file:///tmp/build/80754af9/iniconfig_1602780191262/work
 intervaltree @ file:///tmp/build/80754af9/intervaltree_1598376443606/work
 ipykernel @ file:///C:/ci/ipykernel_1596190155316/work/dist/ipykernel-5.3.4-py3-none-any.whl
 ipython @ file:///C:/ci/ipython_1604083276484/work
-ipython-genutils==0.2.0
+ipython_genutils==0.2.0
 ipywidgets @ file:///tmp/build/80754af9/ipywidgets_1601490159889/work
 isort @ file:///tmp/build/80754af9/isort_1602603989581/work
-itsdangerous==1.1.0
+itsdangerous==2.0.1
 jdcal==1.4.1
 jedi @ file:///C:/ci/jedi_1592833825077/work
-Jinja2==2.11.2
+Jinja2==3.0.2
 joblib @ file:///tmp/build/80754af9/joblib_1601912903842/work
 json5==0.9.5
 jsonschema @ file:///tmp/build/80754af9/jsonschema_1602607155483/work
@@ -110,7 +116,7 @@ libarchive-c==2.9
 llvmlite==0.34.0
 locket==0.2.0
 lxml @ file:///C:/ci/lxml_1603216366346/work
-MarkupSafe==1.1.1
+MarkupSafe==2.0.1
 matplotlib @ file:///C:/ci/matplotlib-base_1603355780617/work
 mccabe==0.6.1
 menuinst==1.4.16
@@ -175,6 +181,7 @@ pydocstyle @ file:///tmp/build/80754af9/pydocstyle_1598885001695/work
 pyflakes==2.2.0
 Pygments @ file:///tmp/build/80754af9/pygments_1604103097372/work
 pylint @ file:///C:/ci/pylint_1598617153160/work
+pymemcache==3.5.0
 pymongo==3.12.0
 PyNaCl @ file:///C:/ci/pynacl_1595000047588/work
 pyodbc===4.0.0-unsupported
@@ -200,11 +207,12 @@ QtAwesome @ file:///tmp/build/80754af9/qtawesome_1602272867890/work
 qtconsole @ file:///tmp/build/80754af9/qtconsole_1600870028330/work
 QtPy==1.9.0
 regex @ file:///C:/ci/regex_1602770567298/work
-requests @ file:///tmp/build/80754af9/requests_1592841827918/work
+requests==2.26.0
 requests-unixsocket==0.2.0
+rfc3986==1.5.0
 rope @ file:///tmp/build/80754af9/rope_1602264064449/work
 Rtree==0.9.4
-ruamel-yaml==0.15.87
+ruamel_yaml==0.15.87
 scikit-image==0.17.2
 scikit-learn @ file:///C:/ci/scikit-learn_1598377018496/work
 scipy @ file:///C:/ci/scipy_1604596260408/work
@@ -230,6 +238,7 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.4
 sphinxcontrib-websupport @ file:///tmp/build/80754af9/sphinxcontrib-websupport_1597081412696/work
 splinter==0.15.0
+spotipy==2.19.0
 spyder @ file:///C:/ci/spyder_1599054115447/work
 spyder-kernels @ file:///C:/ci/spyder-kernels_1599051709837/work
 SQLAlchemy @ file:///C:/ci/sqlalchemy_1603818908746/work
@@ -239,6 +248,7 @@ statsmodels==0.12.0
 sympy @ file:///C:/ci/sympy_1605101511098/work
 tables==3.6.1
 tblib @ file:///tmp/build/80754af9/tblib_1597928476713/work
+tekore==4.0.0
 terminado==0.9.1
 testpath==0.4.4
 threadpoolctl @ file:///tmp/tmp9twdgx9k/threadpoolctl-2.1.0-py3-none-any.whl
@@ -251,13 +261,13 @@ traitlets @ file:///tmp/build/80754af9/traitlets_1602787416690/work
 typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1598376058250/work
 ujson @ file:///C:/ci/ujson_1602505266082/work
 unicodecsv==0.14.1
-urllib3 @ file:///tmp/build/80754af9/urllib3_1603305693037/work
+urllib3==1.26.7
 watchdog @ file:///C:/ci/watchdog_1593447437088/work
 wcwidth @ file:///tmp/build/80754af9/wcwidth_1593447189090/work
 webdriver-manager==3.4.2
 webencodings==0.5.1
 websocket-client==1.1.0
-Werkzeug==1.0.1
+Werkzeug==2.0.2
 widgetsnbextension==3.5.1
 win-inet-pton==1.1.0
 win-unicode-console==0.5

@@ -4,48 +4,46 @@ from django.shortcuts import render, redirect
 # , get_object_or_404
 from django.urls import reverse
 from django.views import generic
-from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView 
+from django.views.generic.edit import FormView
 from django.core.exceptions import *
 from django.core.cache import cache
+from django.conf import settings
 
 # Import models
 from .forms import TrackForm
 from .models import SongTracks
-import os
 
 # Import modules
 import pandas as pd
 import numpy as np
+import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from decouple import config
 import csv
-
-
 
 # FUNCTION TO LOAD HOMEPAGE
 def index(request):
     return render(request, 'polls/index.html')
 
 # FUNCTION TO LOAD MUSIC MAGE SEARCH ENGINE PAGE
-def mage(request):
+class TrackFormView(FormView):
+    template_name = 'polls/mage.html'
+    form_class = TrackForm
+    # success_url = 'mage.html/find/'
+    def form_valid(self, form):
+    #     # This method is called when valid form data has been POSTed.
+    #     # It should return an HttpResponse
+        print(form.cleaned_data)
 
-    return render(request, 'polls/mage.html')
+# def mage(request):
+#     return render(request, 'polls/mage.html')
 
-def results(request, track_id):
-    # form = TrackForm(request.POST)
-    # if form.is_valid():
-    #     sample_track = TrackForm.cleaned_data['sample_track'].value()
-    #     sample_artist = TrackForm.cleaned_data['sample_artist'].value()
-        # context={'sample_track': sample_track,'sample_artist': sample_artist}
-    track_id = cache.get(track_id)
-    return render(request, 'polls/results.html', context={'recs': cache.get('recs'), 
-    'sample_track':cache.get('sample_track'), 'sample_artist':cache.get('sample_artist'), 
-    'track_id':track_id,})
-
-def detail(request, track_id):
-    track_id = cache.get(track_id)
-    return render(request, 'polls/detail.html', {'track_id':track_id})
+# OPTIONAL SONG DETAIL PAGE WITH ALBUM COVER ART, ETC.
+# def detail(request, track_id):
+#     track_id = cache.get('track_id')
+#     return render(request, 'polls/detail.html', {'track_id':track_id})
 
 # SEARCH RESULTS PAGE
 # class ResultsView(generic.DetailView):
@@ -95,19 +93,18 @@ def df():
     else:
         data = SongTracks.objects.all().values()
         df = pd.DataFrame(data)
+        df["mood_vec"] = df[["valence", "energy", "acousticness", "instrumentalness", "speechiness", "mode"]].values.tolist()
         cache.set('df', df, 60)
-    # return df
-    return cache.get('df')
+        return df
 
 # CREATE CLIENT FUNCTION TO CONNECT US TO SPOTIFY
 def client():
-    client_id = config('SPOTIPY_CLIENT_ID')
-    client_secret = config('SPOTIPY_CLIENT_SECRET')
+    client_id = settings.SPOTIPY_CLIENT_ID
+    client_secret = settings.SPOTIPY_CLIENT_SECRET
     client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
     spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-    cache.set('spotify', spotify)
-    # return spotify
-    return cache.get('spotify')
+    cache.get_or_set('spotify', spotify)
+    return spotify
 
 # CREATE FUNCTION TO MATCH INPUT TEXT WITH SPOTIFY SONG TRACK ID
 def get_track_id(request):
@@ -117,10 +114,11 @@ def get_track_id(request):
     track_id = []
     
     # 2. Save the input text in variables
-    form = TrackForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
+    form = TrackForm(request.POST)
+    if form.is_valid():
         sample_track = form.cleaned_data['sample_track']
         sample_artist = form.cleaned_data['sample_artist']
+        print(f'{sample_track} by {sample_artist}')
         cache.set('sample_track', sample_track, 60)
         cache.set('sample_artist', sample_artist, 60)
 
@@ -136,8 +134,7 @@ def get_track_id(request):
 
     track_id = track_id[0]
     cache.set('track_id', track_id, 60)
-    # return track_id
-    return cache.get('track_id')
+    return track_id
 
 
 # CREATE RECOMMENDATION FUNCTION
@@ -159,49 +156,12 @@ def recommend(track_id, ref_df, n_recs = 5):
     
     # If the input track is in the reference set, it will have a distance of 0, but should not be recommended
     ref_df_sorted = ref_df_sorted[ref_df_sorted["id"] != track_id]
-    cache.set('ref_df_sorted', ref_df_sorted, 60)
+    ref_df_sorted = ref_df_sorted.set_index('track_name')
+    cache.set('ref_df_sorted', ref_df_sorted[['artist_name', 'genre']].iloc[:n_recs], 60)
 
-    # return ref_df_sorted.iloc[:n_recs]
-    return cache.get('ref_df_sorted')
+    return ref_df_sorted[['artist_name', 'genre']].iloc[:n_recs]
 
-# def results(request, id=None):
-#     searched_item = get_object_or_404(TrackForm(request.POST), id=id)
-    
-#     context= {'Song Track': searched_item,
-#               }
-#     return render(request, 'polls/results.html', context)
-
-# def vote(request, question_id):
-#     question = get_object_or_404(Question, pk=question_id)
-#     try:
-#         selected_choice = question.choice_set.get(pk=request.POST['choice'])
-#     except (KeyError, Choice.DoesNotExist):
-
-#         # Redisplay the question voting form.
-#         return render(request, 'polls/detail.html', {
-#             'question': question,
-#             'error_message': "You didn't select a choice.",
-#         })
-#     else:
-#         selected_choice.votes += 1
-#         selected_choice.save()
-        
-#         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
-
-# def search(request):
-#     if request.method == 'POST':
-#         search_id = request.POST.get('textfield', None)
-#         try:
-#             user = TrackForm.objects.get(name = search_id)
-#             #do something with user
-#             html = ("<H1>%s</H1>", user)
-#             return HttpResponse(html)
-#         except TrackForm.DoesNotExist:
-#             return HttpResponse("no such song track")  
-#     else:
-#         return render(request, 'results.html')
-
-# CREATE FUNCTION THAT SEARCHES FOR SONG RECOMMENDATIONS
+    # CREATE FUNCTION THAT SEARCHES FOR SONG RECOMMENDATIONS
 def find(request):
     # if the user clicks search
     if request.method == 'POST':
@@ -211,37 +171,42 @@ def find(request):
 
         # if track_id is not None:   
         try:
-                # Try to retrieve song recommendations
-            recs = recommend(track_id=track_id, ref_df=ref_df, n_recs = 5)
-                # return render(request,'mage.html', context=results)
+            # Try to retrieve song recommendations
+            recs = recommend(track_id=track_id, ref_df=ref_df)
+            # return render(request,'mage.html', context=results)
         except:
-                # if it doesn't work then reload the music mage search engine page
+            # if it doesn't work then reload the music mage search engine page
             return render(request, 'polls/mage.html', {
             'error_message': "You didn't enter a song track.",
             })
                
         # Display the page with the results  
         else:
-                # base_url = reverse('results')  # 1 /results/
-                # query_string =  urlencode({'recs': recs})  # 2 recs=dataframe
-                # url = '{}?{}'.format(base_url, query_string)  # 3 /results/?recs=dataframe
-                # return redirect(url)  # 4
-            #   form.save()
-            recs = recs.to_html()
-            # request.session['recs'] = recs.to_html()
+            recs = recs.copy().to_html(classes='table table-striped text-center', justify='center')
+            # classes='table table-striped text-center', justify='center'
             cache.set('recs', recs, 120)
-            # return redirect('results')
             return HttpResponseRedirect(reverse('polls:results', args=(track_id,)))
-                # return render(request,'polls/results.html', context=results)
+            # return render(request,'polls/results.html', context=results)
 
     # if no one clicks the search button render the mage page       
     else:
         # return render(request,'polls/mage.html')
         return render(request,'polls/mage.html')
 
-# def foo(request):
-#     request.session['bar'] = 'FooBar'
-#     return redirect('app:view')
+# FUNCTION TO LOAD RECOMMENDATION RESULTS
+def results(request, track_id):
+    form = TrackForm(request.POST)
+    if form.is_valid():
+        sample_track = form.cleaned_data['sample_track'].upper()
+        sample_artist = form.cleaned_data['sample_artist'].upper()
+    track_id = get_track_id(request)
+    ref_df = df()
+    recs = recommend(track_id=track_id, ref_df=ref_df).copy().to_html(classes='table table-striped text-center', justify='center')
 
-
-
+    # sample_track = cache.get('sample_track') 
+    # sample_artist = cache.get('sample_artist')
+    # recs = cache.get('recs')
+    # track_id = cache.get('track_id')
+    context = {'recs': recs, 'sample_track':sample_track, 'sample_artist':sample_artist, 'track_id':track_id}
+   
+    return render(request, 'polls/results.html', context=context)
