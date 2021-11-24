@@ -48,24 +48,10 @@
                         <h5>based on {{ sample_track }} by {{ sample_artist }}</h5>
 
                         {% cache 600 recs %}
-                            {{recs.as_table|safe}}
+                            {{recs|safe}}
                         {% endcache %}
 
                         <a href="{% url 'polls:mage' %}">Search again?</a>
-
-                        <!-- <ul>
-                            {% for choice in question.choice_set.all %}
-                            <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
-                            {% endfor %}
-                        </ul> -->
-                        
-                        <!-- <ul>
-                        {% for result in results %}
-
-                            <li>{{ result.track_name }} | {{ result.artist_name }}</li>
-    
-                        {% endfor %}
-                        </ul> -->
 
                     </div>
                 </div>

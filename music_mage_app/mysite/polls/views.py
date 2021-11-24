@@ -37,22 +37,10 @@ class TrackFormView(FormView):
     #     # It should return an HttpResponse
         print(form.cleaned_data)
 
-# def mage(request):
-#     return render(request, 'polls/mage.html')
-
 # OPTIONAL SONG DETAIL PAGE WITH ALBUM COVER ART, ETC.
 # def detail(request, track_id):
 #     track_id = cache.get('track_id')
 #     return render(request, 'polls/detail.html', {'track_id':track_id})
-
-# SEARCH RESULTS PAGE
-# class ResultsView(generic.DetailView):
-#     model = SongTracks
-#     template_name = 'results.html'
-#     track_id = cache.get('track_id')
-#     recs = cache.get('recs')
-#     sample_track = cache.get('sample_track')
-#     sample_artist = cache.get('sample_artist')
     
 
 
