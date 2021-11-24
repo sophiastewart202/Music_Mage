@@ -8,9 +8,9 @@ urlpatterns = [
     path('', views.index, name='index'),
     # works
     path('mage.html/', views.TrackFormView.as_view(), name='mage'),
-    # works but doesn't display search results
+    # works 
     path('mage.html/<str:track_id>/', views.results, name='results'),
-    # works but doesn't cache data frame
+    # works
     path('mage.html/find/', views.find, name='find'),  
 ]
 
