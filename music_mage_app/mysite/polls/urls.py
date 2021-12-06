@@ -8,10 +8,10 @@ urlpatterns = [
     path('', views.index, name='index'),
     # works
     path('mage.html/', views.TrackFormView.as_view(), name='mage'),
-    # works 
-    path('mage.html/<str:track_id>/', views.results, name='results'),
+    # does not work 
+    path('mage.html/find/<path:track_id>/', views.results, name='results'),
     # works
-    path('mage.html/find/', views.find, name='find'),  
+    path('mage.html/find/', views.find, name='find'),
 ]
 
 # path('mage.html/', views.mage, name='mage'),

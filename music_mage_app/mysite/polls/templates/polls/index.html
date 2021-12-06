@@ -21,13 +21,13 @@
         <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
             <div class="container px-5">
                 <a class="navbar-brand" href="{% url 'polls:index' %}">Music Mage</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="#!">Sign Up</a></li>
                         <li class="nav-item"><a class="nav-link" href="#!">Log In</a></li>
                     </ul>
-                </div>
+                </div> -->
             </div>
         </nav>
         <!-- Header-->
@@ -54,7 +54,7 @@
                     <div class="col-lg-6 order-lg-1">
                         <div class="p-5">
                             <h2 class="display-4">From those retro record hits...</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p>
+                            <p>Music Mage is a music recommendation system that finds music for you based on a single sample track that you provide. Using Spotify's API, we retrieve data on your song, put it into a vector, and compare it with thousands of other songs in our database. The closer the vector values are, the more similar the songs are in style, sound, and mood.</p>
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                     <div class="col-lg-6">
                         <div class="p-5">
                             <h2 class="display-4">To the top pop singles...</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p>
+                            <p>After sorting all these songs according to how closely they match your sample track, we then sort them by popularity to make sure we are giving you the best possible results. Of these, we return to you the top five matches, hoping that at least one or two of them you have never seen before.</p>
                         </div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                     <div class="col-lg-6 order-lg-1">
                         <div class="p-5">
                             <h2 class="display-4">Let the music magic begin!</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p>
+                            <p>Start by typing in the name of one your favorite song tracks into the Music Mage search box. Next, enter in the name of the artist, band, or ensemble that performed it. Sometimes popular classics have been recorded many times by multiple different artists, so don't skip this important piece! Finally, hit the 'Get Recommendations' button and check out the new song suggestions that Music Mage has for you!</p>
                         </div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
         </section>
         <!-- Footer-->
         <footer class="py-5 bg-black">
-            <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; Your Website 2021</p></div>
+            <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; Music Mage 2021</p></div>
         </footer>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
