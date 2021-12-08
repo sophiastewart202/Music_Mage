@@ -113,7 +113,7 @@ def get_track_id(request):
     # 3. Search Spotify for correct track
         track_result = client().search(q=f'track:{sample_track} artist:{sample_artist}', limit=1, type='track')
     except:
-        return HttpResponse("no such song track")
+        return ("no such song track")
         
     # 4. Save track id
     for i, tdata in enumerate(track_result['tracks']['items']):
@@ -148,7 +148,7 @@ def recommend(track_id, ref_df, n_recs = 5):
 
     return ref_df_sorted[['artist_name', 'genre']].iloc[:n_recs]
 
-    # CREATE FUNCTION THAT SEARCHES FOR SONG RECOMMENDATIONS
+# CREATE FUNCTION THAT SEARCHES FOR SONG RECOMMENDATIONS
 def find(request):
     form = TrackForm(request.POST)
     if form.is_valid():
@@ -172,7 +172,7 @@ def find(request):
                
         # Display the page with the results  
         else:
-            context = {'recs': recs, 'sample_track':sample_track.upper(), 'sample_artist':sample_artist.upper()}
+            # context = {'recs': recs, 'sample_track':sample_track.upper(), 'sample_artist':sample_artist.upper()}
             return HttpResponseRedirect(reverse('polls:results', args=(track_id,)))
             # 'track_id':track_id.encode('UTF-8')
             # response = results(request, track_id.encode('UTF-8'), context)
@@ -183,11 +183,6 @@ def find(request):
             # recs = recs.copy().to_html(classes='table table-striped text-center', justify='center')
             # classes='table table-striped text-center', justify='center'
             # cache.set('recs', recs, 120)
-            # return HttpResponseRedirect(track_id.encode('UTF-8'))
-            # return HttpResponseRedirect(reverse('polls:results', args=(bytes(track_id.encode(encoding = 'UTF-8')),)))
-            # return HttpResponseRedirect(reverse("/find/" + track_id))
-            # return HttpResponseRedirect(reverse('results', kwargs={'track_id': track_id}))
-            # return render(request,'polls/results.html', context=results)
 
     # if no one clicks the search button render the mage page       
     else:
@@ -196,26 +191,15 @@ def find(request):
 
 # FUNCTION TO LOAD RECOMMENDATION RESULTS
 def results(request, track_id):
-    form = TrackForm(request.POST)
-    if form.is_valid():
-        sample_track = form.cleaned_data['sample_track']
-        sample_artist = form.cleaned_data['sample_artist']
-    id = get_track_id(request)
+    sample_track = cache.get('sample_track') 
+    sample_artist = cache.get('sample_artist')
     ref_df = df()
-    recs = recommend(track_id=id, ref_df=ref_df).copy()
+    recs = recommend(track_id=track_id, ref_df=ref_df).copy()
     recs = recs.to_html(classes='table table-striped text-center', justify='center')
     context = {'recs': recs, 'sample_track':sample_track.upper(), 'sample_artist':sample_artist.upper(), 'track_id': id}
-    # 'track_id': id.encode('UTF-8')
-    # sample_track = cache.get('sample_track') 
-    # sample_artist = cache.get('sample_artist')
+    # print('hello')
     # recs = cache.get('recs')
     # track_id = cache.get('track_id')
-    if track_id is not None:
-        return HttpResponseRedirect(id)
-
-    # track_id = smart_bytes(track_id, encoding='utf-8', strings_only=True, errors='strict')
-    #'track_id':bytes(track_id.encode(encoding = 'UTF-8')),
-   
     return render(request, 'polls/results.html', context=context)
 
 #Now, if you want to redirect to results from find along with its context, you can modify your functions like this.
